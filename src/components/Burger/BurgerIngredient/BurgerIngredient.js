@@ -3,15 +3,15 @@ import PropTypes from 'prop-types';
 
 import styles from './BurgerIngredient.module.css';
 
-// /**
-//  * @typedef {Object} BurgerIngredientProps
-//  * @property {string} type the type of ingredient, such as bread-bottom, bread-top, etc...
-//  */
+/**
+ * @typedef {Object} BurgerIngredientProps
+ * @property {string} type the type of ingredient, such as bread-bottom, bread-top, etc...
+ */
 
-// /**
-//  * 
-//  * @param {BurgerIngredientProps} props 
-//  */
+/**
+ * 
+ * @param {BurgerIngredientProps} props 
+ */
 const BurgerIngredient = props => {
     let ingredient;
     switch (props.type) {
