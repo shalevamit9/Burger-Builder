@@ -23,6 +23,7 @@ const controls = [
  * @property {(type: string) => void} ingredientAdded
  * @property {(type: string) => void} ingredientRemoved
  * @property {Disabled} disabled
+ * @property {boolean} purchasable
  * @property {number} price
  */
 
@@ -42,6 +43,11 @@ const BuildControls = props => (
                 removed={() => props.ingredientRemoved(control.type)}
                 isDisabled={props.disabled[control.type]} />
         ))}
+        <button
+            className={styles.OrderButton}
+            disabled={!props.purchasable}>
+            ORDER NOW
+        </button>
     </div>
 );
 
