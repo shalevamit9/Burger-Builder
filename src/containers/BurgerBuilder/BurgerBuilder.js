@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import Aux from '../../hoc/Auxiliary';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
+import Modal from '../../components/UI/Modal/Modal';
+import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 
 import { Ingredients } from '../../components/Burger/Burger';
 
@@ -22,8 +24,21 @@ class BurgerBuilder extends Component {
             meat: 0
         },
         totalPrice: 4,
-        purchasable: false
+        purchasable: false,
+        purchasing: false
     };
+
+    handlePurchase = () => {
+        this.setState({ purchasing: true });
+    }
+
+    handlePurchaseCancel = () => {
+        this.setState({ purchasing: false });
+    }
+
+    handlePurchaseContinue = () => {
+        alert('Continue!');
+    }
 
     /**
      * A helper method to update the order button state from disabled to enabled and reversed
@@ -90,13 +105,20 @@ class BurgerBuilder extends Component {
 
         return (
             <Aux>
+                <Modal show={this.state.purchasing} modalClosed={this.handlePurchaseCancel}>
+                    <OrderSummary
+                        ingredients={this.state.ingredients}
+                        PurchaseCanceled={this.handlePurchaseCancel}
+                        PurchaseContinued={this.handlePurchaseContinue} />
+                </Modal>
                 <Burger ingredients={this.state.ingredients} />
                 <BuildControls
                     ingredientAdded={this.handleAddIngredient}
                     ingredientRemoved={this.handleRemoveIngredient}
                     disabled={disabledInfo}
                     purchasable={this.state.purchasable}
-                    price={this.state.totalPrice} />
+                    price={this.state.totalPrice}
+                    ordered={this.handlePurchase} />
             </Aux>
         );
     }

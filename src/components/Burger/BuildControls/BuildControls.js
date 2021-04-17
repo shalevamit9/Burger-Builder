@@ -25,6 +25,7 @@ const controls = [
  * @property {Disabled} disabled
  * @property {boolean} purchasable
  * @property {number} price
+ * @property {() => void} ordered
  */
 
 /**
@@ -45,7 +46,8 @@ const BuildControls = props => (
         ))}
         <button
             className={styles.OrderButton}
-            disabled={!props.purchasable}>
+            disabled={!props.purchasable}
+            onClick={props.ordered}>
             ORDER NOW
         </button>
     </div>
