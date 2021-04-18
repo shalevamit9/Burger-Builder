@@ -8,12 +8,12 @@ import { Ingredients } from '../Burger';
 /**
  * @typedef {Object} OrderSummaryProps
  * @property {Ingredients} ingredients
- * @property {() => void} PurchaseCanceled
- * @property {() => void} PurchaseContinued
+ * @property {() => void} purchaseCanceled
+ * @property {() => void} purchaseContinued
+ * @property {number} price
  */
 
 /**
- * 
  * @param {OrderSummaryProps} props 
  * @returns 
  */
@@ -32,14 +32,15 @@ const OrderSummary = props => {
             <ul>
                 {ingredientSummary}
             </ul>
+            <p><strong>Total Price: {props.price.toFixed(2)}</strong></p>
             <p>Continue to Checkout?</p>
             <Button
-                clicked={props.PurchaseCanceled}
+                clicked={props.purchaseCanceled}
                 btnType="Danger">
                 CANCEL
             </Button>
             <Button
-                clicked={props.PurchaseContinued}
+                clicked={props.purchaseContinued}
                 btnType="Success">
                 CONTINUE
             </Button>
