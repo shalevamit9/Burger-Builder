@@ -3,10 +3,34 @@ import React, { Component } from 'react';
 import Aux from '../../hoc/Auxiliary';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
-import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
+import Modal from '../../components/UI/Modal/Modal';
+import axiosOrdersInstance from '../../axios-orders';
+import Spinner from '../../components/UI/Modal/Spinner/Spinner';
 
 import { Ingredients } from '../../components/Burger/Burger';
+
+/**
+ * @typedef {Object} Address
+ * @property {string} street
+ * @property {string} zipCode
+ * @property {string} country
+ */
+
+/**
+ * @typedef {Object} Customer
+ * @property {string} deliveryMethod
+ * @property {string} name 
+ * @property {string} email 
+ * @property {Address} address 
+ */
+
+/**
+ * @typedef {Object} Order
+ * @property {Ingredients} ingredients
+ * @property {number} price
+ * @property {Customer} customer
+ */
 
 const INGREDIENTS_PRICE = {
     salad: 0.5,
@@ -25,7 +49,8 @@ class BurgerBuilder extends Component {
         },
         totalPrice: 4,
         purchasable: false,
-        purchasing: false
+        purchasing: false,
+        loading: false
     };
 
     handlePurchase = () => {
@@ -36,8 +61,32 @@ class BurgerBuilder extends Component {
         this.setState({ purchasing: false });
     }
 
-    handlePurchaseContinue = () => {
-        alert('Continue!');
+    handlePurchaseContinue = async () => {
+        this.setState({ loading: true });
+
+        /** @type {Order} */
+        const order = {
+            ingredients: this.state.ingredients,
+            price: this.state.totalPrice,
+            customer: {
+                name: 'Sweet Papuna',
+                address: {
+                    street: 'Test street 1',
+                    zipCode: '41351',
+                    country: 'Germany'
+                },
+                email: 'test@test.com',
+                deliveryMethod: 'fastest'
+            }
+        };
+
+        try {
+            const response = await axiosOrdersInstance.post('orders.json', order);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            this.setState({ loading: false, purchasing: false });
+        }
     }
 
     /**
@@ -48,7 +97,7 @@ class BurgerBuilder extends Component {
         // const ingredientSum = Object.keys(ingredients)
         //     .map(ingredientKey => ingredients[ingredientKey])
         //     .reduce((sum, element) => sum + element, 0);
-        
+
         let ingredientSum = 0;
         for (const ingredientKey in ingredients) {
             ingredientSum += ingredients[ingredientKey];
@@ -103,14 +152,19 @@ class BurgerBuilder extends Component {
             disabledInfo[key] = disabledInfo[key] === 0;
         }
 
+        let orderSummary = <OrderSummary
+            ingredients={this.state.ingredients}
+            purchaseCanceled={this.handlePurchaseCancel}
+            purchaseContinued={this.handlePurchaseContinue}
+            price={this.state.totalPrice} />;
+        if (this.state.loading) {
+            orderSummary = <Spinner />;
+        }
+
         return (
             <Aux>
                 <Modal show={this.state.purchasing} modalClosed={this.handlePurchaseCancel}>
-                    <OrderSummary
-                        ingredients={this.state.ingredients}
-                        purchaseCanceled={this.handlePurchaseCancel}
-                        purchaseContinued={this.handlePurchaseContinue}
-                        price={this.state.totalPrice} />
+                    {orderSummary}
                 </Modal>
                 <Burger ingredients={this.state.ingredients} />
                 <BuildControls
