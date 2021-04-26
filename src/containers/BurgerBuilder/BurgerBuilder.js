@@ -7,6 +7,7 @@ import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Modal from '../../components/UI/Modal/Modal';
 import axiosOrdersInstance from '../../axios-orders';
 import Spinner from '../../components/UI/Modal/Spinner/Spinner';
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
 import { Ingredients } from '../../components/Burger/Burger';
 
@@ -179,4 +180,4 @@ class BurgerBuilder extends Component {
     }
 }
 
-export default BurgerBuilder;
+export default withErrorHandler(BurgerBuilder, axiosOrdersInstance);
