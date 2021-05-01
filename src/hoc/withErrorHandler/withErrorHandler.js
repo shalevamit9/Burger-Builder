@@ -8,18 +8,17 @@ const withErrorHandler = (WrappedComponent, axios) => {
             error: null
         }
 
-        componentDidMount() {
-            // clean up the error object when sending a request
-            this.requestInterceptor = axios.interceptors.request.use(request => {
-                this.setState({ error: null });
-                return request;
-            });
+        // clean up the error object when sending a request
+        requestInterceptor = axios.interceptors.request.use(request => {
+            this.setState({ error: null });
+            return request;
+        });
 
-            // when getting an error from http response set the state with the received error
-            this.responseInterceptor = axios.interceptors.response.use(response => response, error => {
-                this.setState({ error: error });
-            });
-        }
+        // when getting an error from http response set the state with the received error
+        responseInterceptor = axios.interceptors.response.use(response => response, error => {
+            this.setState({ error: error });
+        });
+
 
         componentWillUnmount() {
             axios.interceptors.request.eject(this.requestInterceptor);

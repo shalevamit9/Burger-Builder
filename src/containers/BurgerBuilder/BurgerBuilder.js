@@ -5,8 +5,8 @@ import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Modal from '../../components/UI/Modal/Modal';
-import axiosOrdersInstance from '../../axios-orders';
 import { AxiosResponse } from 'axios';
+import axiosOrdersInstance from '../../axios-orders';
 import Spinner from '../../components/UI/Modal/Spinner/Spinner';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
@@ -51,10 +51,15 @@ class BurgerBuilder extends Component {
     };
 
     async componentDidMount() {
+        console.log(this.props);
         /** @type {AxiosResponse<Ingredients>} */
-        const response = await axiosOrdersInstance.get('ingredients.json');
+        try {
+            const response = await axiosOrdersInstance.get('ingredients.json');
 
-        this.setState({ ingredients: response.data });
+            this.setState({ ingredients: response.data });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     handlePurchase = () => {
@@ -66,31 +71,28 @@ class BurgerBuilder extends Component {
     }
 
     handlePurchaseContinue = async () => {
-        this.setState({ loading: true });
+        // My Way
+        // const { salad, cheese, meat, bacon } = this.state.ingredients;
 
-        /** @type {Order} */
-        const order = {
-            ingredients: this.state.ingredients,
-            price: this.state.totalPrice,
-            customer: {
-                name: 'Sweet Papuna',
-                address: {
-                    street: 'Test street 1',
-                    zipCode: '41351',
-                    country: 'Germany'
-                },
-                email: 'test@test.com',
-                deliveryMethod: 'fastest'
-            }
-        };
+        // this.props.history.push(
+        //     `/checkout?salad=${salad}&cheese=${cheese}&meat=${meat}&bacon=${bacon}`
+        // );
 
-        try {
-            const response = await axiosOrdersInstance.post('orders.json', order);
-        } catch (error) {
-            console.log(error);
-        } finally {
-            this.setState({ loading: false, purchasing: false });
+        // Teacher Way
+        const queryParams = [];
+        for (const ingredient in this.state.ingredients) {
+            queryParams.push(`${encodeURIComponent(ingredient)}=${encodeURIComponent(this.state.ingredients[ingredient])}`);
         }
+
+        queryParams.push(`price=${this.state.totalPrice.toFixed(2)}`);
+
+        const queryString = queryParams.join('&');
+
+        this.props.history.push({
+            pathname: '/checkout',
+            search: queryString
+        });
+        // this.props.history.push(`/checkout?${queryString}`);
     }
 
     /**
